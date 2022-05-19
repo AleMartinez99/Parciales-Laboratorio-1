@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "miBiblioteca.h"
 #include "censista.h"
-#include "fecha.h"
+
 
 #define C_INACTIVO -1
 #define C_LIBERADO 0
@@ -13,15 +13,17 @@
 int menu() {
 	int opcion;
 	printf("	**** MENU CENSO 2022 ****\n");
-	printf("1 - Carga censista\n");
-	printf("2 - Modificar censista\n");
-	printf("3 - Baja censista\n");
-	printf("4 - Cargar zona\n");
-	printf("5 - Asignar zona a censar\n");
-	printf("6 - Carga de datos\n");
-	printf("7 - Mostrar censistas\n");
-	printf("8 - Mostrar zonas\n");
-	printf("9 - SALIR\n");
+	printf(" 1 - Carga censista\n");
+	printf(" 2 - Modificar censista\n");
+	printf(" 3 - Baja censista\n");
+	printf(" 4 - Cargar zona\n");
+	printf(" 5 - Asignar zona a censar\n");
+	printf(" 6 - Carga de datos\n");
+	printf(" 7 - Mostrar censistas\n");
+	printf(" 8 - Mostrar zonas\n");
+	printf(" 9 - Hardcodear Censistas\n");
+	printf("10 - Hardcodear Zonas\n");
+	printf("11 - SALIR\n");
 	printf("Ingrese opcion: ");
 	fflush(stdin);
 	scanf("%d", &opcion);
@@ -48,7 +50,6 @@ int menuModificacion() {
 int menuModificacionFecha() {
 
 	int opcion;
-
 	printf("1 - Modificar DIA\n");
 	printf("2 - Modificar MES\n");
 	printf("3 - Modificar ANIO\n");
@@ -62,8 +63,6 @@ int menuModificacionFecha() {
 int menuModificacionDireccion() {
 
 	int opcion;
-
-
 	printf("1 - Modificar CALLE\n");
 	printf("2 - Modificar ALTURA\n");
 	printf("INGRESE OPCION: ");
@@ -82,7 +81,7 @@ int inicializarCensistas(eCensista censistas[], int len)
 
         for(int i = 0; i < len; i++)
         {
-        	censistas[i].estado = C_LIBERADO;
+        	censistas[i].isEmpty = 1;
         }
     }
     return todoOk;
@@ -96,7 +95,7 @@ int buscarPrimerEspacioLleno(eCensista censistas[], int len) {
 	{
 		for(int i = 0; i < len; i++)
 		{
-			if(censistas[i].estado != C_LIBERADO)
+			if(censistas[i].isEmpty == 0)
 			{
 				ok = 1;
 				break;
@@ -114,7 +113,7 @@ int buscarLibre(eCensista censistas[], int len)
     {
         for(int i = 0; i < len; i++)
         {
-            if(censistas[i].estado == C_LIBERADO)
+            if(censistas[i].isEmpty == 1)
             {
                 indice = i;
                 break;
@@ -141,7 +140,6 @@ int buscarCencistaIdLiberado(eCensista censistas[], int len, int id)
     }
     return indice;
 }
-
 
 int buscarCencistaId(eCensista censistas[], int len, int id)
 {
@@ -177,6 +175,7 @@ int altaCensista(eCensista censistas[], int len, int* pId)
         if(indice == -1 )
         {
             printf("No hay lugar\n");
+            system("pause");
         }
         else
         {
@@ -189,14 +188,11 @@ int altaCensista(eCensista censistas[], int len, int* pId)
             utnGetCadenaSoloCaracteres(auxCensista.apellido,"Ingrese apellido: ","Error... Ingrese de 3 a 20 caracteres\n","Error... Ingrese solo letras\n", 20);
             miCorregirUnaCadena(auxCensista.apellido);
 
+            utnGetNumero(&auxCensista.fechaNacimiento.dia,"Ingrese dia de nacimiento: ","Error... dia invalido(1 a 31)",1,31);
 
-            utnGetNumero(&auxCensista.edad,"Ingrese edad: ","Error... Edad invalida(18 a 99)",18,99);
+            utnGetNumero(&auxCensista.fechaNacimiento.mes,"Ingrese mes de nacimiento: ","Error... mes invalido(1 a 12)",1,12);
 
-            utnGetNumero(&auxCensista.fechaNacimiento.dia,"Ingrese nuevo dia: ","Error... dia invalido(1 a 31)",1,31);
-
-            utnGetNumero(&auxCensista.fechaNacimiento.mes,"Ingrese nuevo mes: ","Error... mes invalido(1 a 12)",1,12);
-
-            utnGetNumero(&auxCensista.fechaNacimiento.anio,"Ingrese nuevo anio: ","Error... anio invalido(1940 a 2002)",1940,2002);
+            utnGetNumero(&auxCensista.fechaNacimiento.anio,"Ingrese anio de nacimiento: ","Error... anio invalido(1940 a 2002)",1940,2002);
 
             validoFecha = validarFecha(auxCensista.fechaNacimiento.dia,auxCensista.fechaNacimiento.mes,auxCensista.fechaNacimiento.anio);
 
@@ -205,11 +201,14 @@ int altaCensista(eCensista censistas[], int len, int* pId)
 				scanf("%d/%d/%d",&auxCensista.fechaNacimiento.dia,&auxCensista.fechaNacimiento.mes,&auxCensista.fechaNacimiento.anio);
 				}
 			}
-
+        	auxCensista.edad = 2022 - auxCensista.fechaNacimiento.anio;
             utnGetCadenaSoloCaracteres(auxCensista.direccion.calle,"Ingrese su calle: ","Error... Ingrese de 3 a 50 caracteres\n","Error... Ingrese solo letras\n", 50);
             miCorregirVariasCadenasEnUna(auxCensista.direccion.calle);
 
             utnGetNumero(&auxCensista.direccion.altura,"Ingrese altura: ","Error... altura invalida(1 a 9999)",1,9999);
+
+            auxCensista.estado = C_LIBERADO;
+            auxCensista.isEmpty = 0;
 
             censistas[indice] = auxCensista;
             todoOk = 1;
@@ -229,42 +228,42 @@ int modificarCensista(eCensista censistas[], int len)
 
     if(censistas != NULL && len > 0)
     {
-        printf("          **** MODIFICAR ASOCIADO ****\n\n");
+        printf("        **** MODIFICAR ASOCIADO ****\n\n");
         mostrarCensistas(censistas,len);
         printf("\nIngrese id: ");
         fflush(stdin);
         scanf("%d", &id);
-
-        indice = buscarCencistaIdLiberado(censistas,len,id);
-
+        indice = buscarCencistaId(censistas,len,id);
         if(indice == -1)
         {
             printf("El id: %d no esta en el sistema\n",id);
+            system("pause");
             todoOk = 0;
         }
         else
         {
         	mostrarCensista(censistas[indice]);
 
-            printf("Confirma la modificacion a este cencista?, presione 1 para SI ");
+            printf("Confirma la modificacion a este cencista?, presione 1 para SI");
             fflush(stdin);
             scanf("%d", &confirma);
 
             if(confirma != 1)
             {
                 printf("Modificacion cancelada\n");
+                system("pause");
                 todoOk = 0;
             }
             else
             {
                 switch(menuModificacion()) {
                 	case 1:
-                		utnGetCadenaSoloCaracteres(auxCensista.nombre,"Ingrese nuevo nombre: ","Error... Ingrese de 3 a 20 caracteres\n","Error... Ingrese solo letras\n", 20);
+                		utnGetCadenaSoloCaracteres(auxCensista.nombre,"Ingrese nuevo nombre: ","Error... Ingrese de 3 a 20 caracteres\n","Error... Ingrese solo letras\n",20);
                 		miCorregirUnaCadena(auxCensista.nombre);
                 		strcpy(censistas[indice].nombre,auxCensista.nombre);
                 	break;
                 	case 2:
-                		utnGetCadenaSoloCaracteres(auxCensista.apellido,"Ingrese nuevo apellido: ","Error... Ingrese de 3 a 20 caracteres\n","Error... Ingrese solo letras\n", 20);
+                		utnGetCadenaSoloCaracteres(auxCensista.apellido,"Ingrese nuevo apellido: ","Error... Ingrese de 3 a 20 caracteres\n","Error... Ingrese solo letras\n",20);
                 		miCorregirUnaCadena(auxCensista.apellido);
                 		strcpy(censistas[indice].apellido,auxCensista.apellido);
                 		break;
@@ -285,6 +284,7 @@ int modificarCensista(eCensista censistas[], int len)
                 				break;
                 			default:
                 				printf("Opcion invalida, Modificacion cancelada\n");
+                				system("pause");
                 				todoOk = 0;
                 		}
 						while(validarFecha(auxCensista.fechaNacimiento.dia,auxCensista.fechaNacimiento.mes,auxCensista.fechaNacimiento.anio) != 1) {
@@ -309,48 +309,7 @@ int modificarCensista(eCensista censistas[], int len)
     return todoOk;
 }
 
-int bajaCensista(eCensista censistas[], int len) {
 
-	int todoOk = 1;
-	int indice;
-	int id;
-	int confirma = 0;
-
-	if(censistas != NULL && len > 0)    {
-
-		printf("     **** BAJA CENSISTA ****\n\n");
-		mostrarCensistas(censistas,len);
-		printf("\nIngrese id del censista a dar de baja: ");
-		fflush(stdin);
-		scanf("%d", &id);
-
-		indice = buscarCencistaId(censistas,len,id);
-
-		if(indice == -1) {
-			printf("El id: %d no esta en el sistema\n",id);
-			todoOk = 0;
-		} else {
-			if(censistas[indice].estado == C_LIBERADO) {
-				mostrarCensista(censistas[indice]);
-				printf("Confirma baja? Presione 1 para SI ");
-				fflush(stdin);
-				scanf("%d", &confirma);
-
-				if(confirma == 1) {
-					censistas[indice].estado = C_INACTIVO;
-				} else {
-					printf("Baja cancelada\n");
-					todoOk = 0;
-				}
-			} else {
-				printf("Para dar de baja el censista tiene que estar LIBERADO\n");
-				todoOk = 0;
-				system("pause");
-			}
-		}
-	}
-	return todoOk;
-}
 
 void mostrarCensista(eCensista unCensista)
 {
@@ -392,7 +351,7 @@ int mostrarCensistasLiberados(eCensista censistas[], int tam)
         printf("-----------------------------------------------------------------\n");
         for(int i = 0; i < tam; i++)
         {
-            if(censistas[i].estado == C_LIBERADO)
+            if(censistas[i].estado == C_LIBERADO && censistas[i].isEmpty == 0)
             {
             	mostrarCensista(censistas[i]);
                 flag = 1;
@@ -401,6 +360,7 @@ int mostrarCensistasLiberados(eCensista censistas[], int tam)
         if(!flag)
         {
             printf("No hay cencistas liberados para mostrar\n");
+            system("pause");
         }
     }
     return todoOk;
@@ -421,7 +381,7 @@ int mostrarCensistas(eCensista censistas[], int tam)
         printf("-----------------------------------------------------------------\n");
         for(int i = 0; i < tam; i++)
         {
-            if(censistas[i].estado != C_INACTIVO)
+            if(censistas[i].isEmpty == 0)
             {
             	mostrarCensista(censistas[i]);
                 flag = 1;
@@ -430,6 +390,7 @@ int mostrarCensistas(eCensista censistas[], int tam)
         if(!flag)
         {
             printf("No hay cencistas para mostrar\n");
+            system("pause");
         }
     }
     return todoOk;

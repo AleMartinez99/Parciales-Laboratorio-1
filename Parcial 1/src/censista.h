@@ -1,6 +1,7 @@
 #include "fecha.h"
 #include "direccion.h"
 
+
 #ifndef CENSISTA_H_
 #define CENSISTA_H_
 
@@ -13,6 +14,7 @@ typedef struct {
 	eDireccion direccion;
 	int estado;
 	int id;
+	int isEmpty;
 
 }eCensista;
 
@@ -31,4 +33,4 @@ int modificarCensista(eCensista censistas[], int len);
 int cargarDescripcionCensistaNombre(eCensista censistas[],int tam,int id,char nombre[]);
 int cargarDescripcionCensistaApellido(eCensista censistas[],int tam,int id,char apellido[]);
 int mostrarCensistasLiberados(eCensista censistas[], int tam);
-int bajaCensista(eCensista censistas[], int len);
+

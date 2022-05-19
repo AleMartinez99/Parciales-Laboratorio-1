@@ -10,6 +10,7 @@
 #define Z_PENDIENTE 0
 #define Z_FINALIZADO 1
 
+#define C_INACTIVO -1
 #define C_LIBERADO 0
 #define C_ACTIVO 1
 
@@ -49,6 +50,21 @@ int buscarLibreZona(eZona zonas[], int lenZonas)
     return indice;
 }
 
+int buscarPrimerEspacioLlenoZonas(eZona zonas[], int len) {
+
+	int ok = 0;
+
+	if(zonas != NULL && len > 0) {
+		for(int i = 0; i < len; i++) {
+			if(zonas[i].isEmpty == 0) {
+				ok = 1;
+				break;
+			}
+		}
+	}
+		return ok;
+}
+
 int buscarZonaId(eZona zonas[], int len, int id)
 {
     int indice = -1;
@@ -65,6 +81,24 @@ int buscarZonaId(eZona zonas[], int len, int id)
         }
     }
     return indice;
+}
+
+int buscarZonaIdCensista(eZona zonas[], int len, int id) {
+
+	int indice = -1;
+
+	    if(zonas != NULL && len > 0)
+	    {
+	        for(int i = 0; i < len ; i++)
+	        {
+	            if(zonas[i].idCensista == id)
+	            {
+	                indice = i;
+	                break;
+	            }
+	        }
+	    }
+	    return indice;
 }
 
 int cargarZona(eZona zonas[],int lenZonas,eLocalidad localidades[], int lenLocalidades,int* id) {
@@ -134,15 +168,17 @@ int asignarZona(eZona zonas[],int lenZonas,eCensista censistas[],int lenCensista
 
 		if(indiceZona == -1) {
 			printf("No hay una zona con esa ID\n");
+			system("pause");
 		} else {
 			mostrarCensistasLiberados(censistas,lenCensista);
-			printf("Ingrese ID del censista para asignarle la zona con id: %d", idZona);
+			printf("Ingrese ID del censista para asignar: ");
 			fflush(stdin);
 			scanf("%d", &idCensista);
 			indiceCensista = buscarCencistaIdLiberado(censistas,lenCensista, idCensista);
 
 			if(indiceCensista == -1) {
 				printf("No hay un censista con esa ID\n");
+				system("pause");
 			} else {
 				zonas[indiceZona].idCensista = idCensista;
 				zonas[indiceZona].tieneCensistaAsignado = 1;
@@ -174,8 +210,10 @@ int cargaDeDatos(eZona zonas[],int lenZonas,eCensista censistas[],int lenCensist
 
 		if(indiceZona == -1) {
 			printf("No existe una zona con esa ID\n");
+			system("pause");
 		} else if (!zonas[indiceZona].tieneCensistaAsignado) {
 			printf("No se le puede dar finalizada ya que ningun censista paso por esa zona\n");
+			system("pause");
 		} else {
 
 			utnGetNumeroSoloMinimo(&zonas[indiceZona].cantCensadosSitu,"Ingrese cantidad de censados IN SITU: ","Ingrese un numero mayor o igual a 0: ",0);
@@ -207,7 +245,7 @@ int mostrarZonas(eZona zonas[],int lenZonas,eCensista censistas[],int lenCensist
         printf("------------------------------------------------------------\n");
         for(int i = 0; i < lenZonas; i++)
         {
-            if(zonas[i].isEmpty == 0)
+            if(zonas[i].isEmpty == 0 && zonas[i].tieneCensistaAsignado)
             {
             	mostrarZona(zonas[i],censistas,lenCensista,localidades, lenLocalidades);
                 flag = 1;
@@ -216,6 +254,7 @@ int mostrarZonas(eZona zonas[],int lenZonas,eCensista censistas[],int lenCensist
         if(!flag)
         {
             printf("No hay zonas para mostrar\n");
+            system("pause");
         }
     }
     return todoOk;
@@ -236,7 +275,7 @@ int mostrarZonasConCensista(eZona zonas[],int lenZonas,eCensista censistas[],int
         printf("------------------------------------------------------------\n");
         for(int i = 0; i < lenZonas; i++)
         {
-            if(zonas[i].isEmpty == 0 && zonas[i].tieneCensistaAsignado)
+            if(zonas[i].isEmpty == 0 && zonas[i].tieneCensistaAsignado == 1)
             {
             	mostrarZona(zonas[i],censistas,lenCensista,localidades, lenLocalidades);
                 flag = 1;
@@ -245,6 +284,7 @@ int mostrarZonasConCensista(eZona zonas[],int lenZonas,eCensista censistas[],int
         if(!flag)
         {
             printf("No hay zonas para mostrar\n");
+
         }
     }
     return todoOk;
@@ -259,21 +299,23 @@ int mostrarZonasSinCensista(eZona zonas[],int lenZonas,eCensista censistas[],int
     {
         todoOk = 1;
 
-        printf(" **** LISTA DE ZONAS SIN CENSISTA****\n");
-        printf("---------------------------------------------\n");
-        printf(" ID | LOCALIDAD  | CALLES | ESTADO \n");
-        printf("---------------------------------------------\n");
+        printf("   **** LISTA DE ZONAS SIN CENSISTA ****\n");
+        printf("---------------------------------------------------------------------------------------\n");
+        printf(" ID | LOCALIDAD  |                   CALLES               	| ESTADO \n");
+        printf("-------------------------------------------------------------------------------------------\n");
         for(int i = 0; i < lenZonas; i++)
         {
             if(zonas[i].isEmpty == 0 && zonas[i].tieneCensistaAsignado == 0)
             {
             	mostrarZonaSinCensista(zonas[i],censistas,lenCensista,localidades, lenLocalidades);
+
                 flag = 1;
             }
         }
         if(!flag)
         {
             printf("No hay zonas para mostrar\n");
+            system("pause");
         }
     }
     return todoOk;
@@ -282,24 +324,27 @@ int mostrarZonasSinCensista(eZona zonas[],int lenZonas,eCensista censistas[],int
 void mostrarZonaSinCensista(eZona unaZona,eCensista censistas[],int lenCensista,eLocalidad localidades[], int lenLocalidades)
 {
 	char estado[12];
-	char descLocalidad[15];
+	char descLocalidad[20];
 
 	cargarDescripcionLocalidad(localidades,lenLocalidades,unaZona.idLocalidad,descLocalidad);
+
 
 	if(unaZona.estado == Z_PENDIENTE) {
 		strcpy(estado,"PENDIENTE");
 	} else  {
 		strcpy(estado,"FINALIZADA");
 	}
-    printf("%d   %s    %s   %s\n",
-    		unaZona.id,
-			descLocalidad,
-    		unaZona.calles[0],
-			estado
-           );
-    for(int i = 1;i < 4;i++){
-    	printf("           %s\n",unaZona.calles[i]);
-    }
+
+		printf(" %d    %-15s     %s,%s,%s,%s         %s\n",
+				unaZona.id,
+				descLocalidad,
+				unaZona.calles[0],
+				unaZona.calles[1],
+				unaZona.calles[2],
+				unaZona.calles[3],
+				estado
+			   );
+
 }
 
 void mostrarZona(eZona unaZona,eCensista censistas[],int lenCensista,eLocalidad localidades[], int lenLocalidades)
@@ -318,17 +363,70 @@ void mostrarZona(eZona unaZona,eCensista censistas[],int lenCensista,eLocalidad 
 	} else  {
 		strcpy(estado,"FINALIZADA");
 	}
-    printf("%d  %s,%s   %s    %s   %s\n",
+    printf("%d  %s,%s   %s    %s,%s,%s,%s   %s\n",
     		unaZona.id,
 			nombre,
 			apellido,
 			descLocalidad,
     		unaZona.calles[0],
+			unaZona.calles[1],
+			unaZona.calles[2],
+			unaZona.calles[3],
 			estado
            );
-    for(int i = 1;i < 4;i++){
-    	printf("                  %s   \n",unaZona.calles[i]);
-    }
+
+}
+
+
+int bajaCensista(eCensista censistas[], int len,eZona zonas[], int lenZonas) {
+
+	int todoOk = 1;
+	int indice;
+	int indiceZona;
+	int id;
+	int confirma = 0;
+
+	if(censistas != NULL && len > 0)    {
+
+		printf("     **** BAJA CENSISTA ****\n\n");
+		mostrarCensistas(censistas,len);
+		printf("\nIngrese id del censista a dar de baja: ");
+		fflush(stdin);
+		scanf("%d", &id);
+
+		indice = buscarCencistaId(censistas,len,id);
+
+		if(indice == -1) {
+			printf("El id: %d no esta en el sistema\n",id);
+			todoOk = 0;
+			system("pause");
+		} else {
+				mostrarCensista(censistas[indice]);
+				printf("Confirma baja? Presione 1 para SI: ");
+				fflush(stdin);
+				scanf("%d", &confirma);
+			if(censistas[indice].estado == C_ACTIVO) {
+				if(confirma == 1) {
+					censistas[indice].estado = C_INACTIVO;
+					indiceZona = buscarZonaIdCensista(zonas,len, id);
+					zonas[indiceZona].tieneCensistaAsignado = 0;
+				} else {
+					printf("Baja cancelada\n");
+					todoOk = 0;
+					system("pause");
+				}
+			} else {
+				if(confirma == 1) {
+					censistas[indice].isEmpty = 1;
+				} else {
+					printf("Baja cancelada\n");
+					todoOk = 0;
+					system("pause");
+				}
+			}
+		}
+	}
+	return todoOk;
 }
 
 

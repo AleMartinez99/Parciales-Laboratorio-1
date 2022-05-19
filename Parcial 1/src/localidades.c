@@ -34,13 +34,13 @@ int validarIdLocalidad(int idAValidar ,eLocalidad localidades[], int tamL) {
     return todoOk;
 }
 
-int cargarDescripcionLocalidad(eLocalidad localidades[],int tam,int idLocalidad,char descripcionLocalidad[]) {
+int cargarDescripcionLocalidad(eLocalidad localidades[],int lenLocalidad,int idLocalidad,char descripcionLocalidad[]) {
 
     int todoOk = 0;
 
-    if(localidades != NULL && tam > 0 && descripcionLocalidad != NULL) {
+    if(localidades != NULL && lenLocalidad > 0) {
         todoOk = -1;
-        for(int i = 0; i < tam; i++) {
+        for(int i = 0; i < lenLocalidad; i++) {
             if(localidades[i].id == idLocalidad){
                 strcpy(descripcionLocalidad, localidades[i].descripcion);
                 break;

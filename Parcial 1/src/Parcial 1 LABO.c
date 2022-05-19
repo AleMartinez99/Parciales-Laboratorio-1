@@ -4,6 +4,7 @@
 #include "censista.h"
 #include "localidades.h"
 #include "zona.h"
+#include "dataWareHouse.h"
 
 #define C_INACTIVO -1
 #define C_LIBERADO 0
@@ -58,7 +59,7 @@ int main(void) {
 				break;
 			case 3:
 				if(buscarPrimerEspacioLleno(censistas,LEN_CENSISTAS)) {
-					if(bajaCensista(censistas,LEN_CENSISTAS)) {
+					if(bajaCensista(censistas,LEN_CENSISTAS,zonas,LEN_ZONAS)) {
 						printf("BAJA realizada con exito\n");
 					}
 				} else {
@@ -67,23 +68,43 @@ int main(void) {
 				}
 				break;
 			case 4:
-				cargarZona(zonas,LEN_ZONAS, localidades,LEN_LOCALIDADES,&nextIdZona);
+				 if(buscarLibreZona(zonas,LEN_ZONAS) != -1) {
+					 cargarZona(zonas,LEN_ZONAS, localidades,LEN_LOCALIDADES,&nextIdZona);
+				 } else {
+					 printf("No hay mas zonas para cargar\n");
+				 }
 				break;
 			case 5:
-				asignarZona(zonas,LEN_ZONAS, censistas, LEN_CENSISTAS,localidades,LEN_LOCALIDADES);
+				if(buscarPrimerEspacioLlenoZonas(zonas,LEN_CENSISTAS) == 1) {
+					asignarZona(zonas,LEN_ZONAS, censistas, LEN_CENSISTAS,localidades,LEN_LOCALIDADES);
+				} else {
+					printf("No hay zonas para asignar\n");
+					system("pause");
+				}
 				break;
 			case 6:
-				cargaDeDatos(zonas, LEN_ZONAS, censistas, LEN_CENSISTAS, localidades,  LEN_LOCALIDADES);
+				if(buscarPrimerEspacioLlenoZonas(zonas, LEN_CENSISTAS) != 0) {
+					cargaDeDatos(zonas, LEN_ZONAS, censistas, LEN_CENSISTAS, localidades,  LEN_LOCALIDADES);
+				} else {
+					printf("No hay zonas para cargar datos\n");
+					system("pause");
+				}
 				break;
 			case 7:
 				mostrarCensistas(censistas,LEN_CENSISTAS);
 				break;
 			case 8:
 				 mostrarZonasConCensista(zonas, LEN_ZONAS, censistas, LEN_CENSISTAS, localidades,  LEN_LOCALIDADES);
-				 printf("\n----------------------------------------------------------------------------\n");
+				 printf("\n------------------------------------------------------------------------------------\n");
 				 mostrarZonasSinCensista(zonas, LEN_ZONAS, censistas, LEN_CENSISTAS, localidades,  LEN_LOCALIDADES);
 				break;
 			case 9:
+				hardcodearCensistas(censistas,LEN_CENSISTAS, 8, &nextId);
+				break;
+			case 10:
+				hardcodearZonas(zonas,LEN_ZONAS ,8, &nextIdZona);
+				break;
+			case 11:
 				seguir = 0;
 				break;
 			default:
