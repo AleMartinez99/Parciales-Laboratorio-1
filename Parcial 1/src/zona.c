@@ -429,4 +429,35 @@ int bajaCensista(eCensista censistas[], int len,eZona zonas[], int lenZonas) {
 	return todoOk;
 }
 
+int mostrarCensistasLoc(eCensista censistas[], int len,eZona zonas[], int lenZonas)
+{
+    int todoOk = 0;
+    int flag = 0;
 
+    if(censistas != NULL  && len > 0)
+    {
+        todoOk = 1;
+
+        printf("            **** LISTA DE CENCISTAS ****\n");
+        printf("-----------------------------------------------------------------\n");
+        printf(" ID  NOMBRE  APELLIDO  EDAD  FECHA NACIMIENTO  DIRECCION  ESTADO \n");
+        printf("-----------------------------------------------------------------\n");
+        for(int i = 0; i < len; i++)
+        {
+            if(censistas[i].isEmpty == 0)
+            {
+            	for(int j = 0;j<lenZonas;j++) {
+            		if(zonas[j].idLocalidad == 1000 ||zonas[j].idLocalidad == 1003)
+            		mostrarCensista(censistas[i]);
+            		flag = 1;
+            	}
+            }
+        }
+        if(!flag)
+        {
+            printf("No hay cencistas para mostrar\n");
+            system("pause");
+        }
+    }
+    return todoOk;
+}

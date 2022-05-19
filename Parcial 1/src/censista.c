@@ -21,9 +21,10 @@ int menu() {
 	printf(" 6 - Carga de datos\n");
 	printf(" 7 - Mostrar censistas\n");
 	printf(" 8 - Mostrar zonas\n");
-	printf(" 9 - Hardcodear Censistas\n");
-	printf("10 - Hardcodear Zonas\n");
-	printf("11 - SALIR\n");
+	printf(" 9 - INFORMES\n");
+	printf(" 10 - Hardcodear Censistas\n");
+	printf("11 - Hardcodear Zonas\n");
+	printf("12 - SALIR\n");
 	printf("Ingrese opcion: ");
 	fflush(stdin);
 	scanf("%d", &opcion);
@@ -40,6 +41,22 @@ int menuModificacion() {
 	printf("3 - Modificar EDAD\n");
 	printf("4 - Modificar Fecha de Nacimiento\n");
 	printf("5 - Modificar Direccion\n");
+	printf("INGRESE OPCION: ");
+	fflush(stdin);
+	scanf("%d", &opcion);
+
+	return opcion;
+}
+
+int menuInformes() {
+
+	int opcion;
+	printf(" **** INFORMES ****\n");
+	printf("1 - Informar cantidad de censistas en estado Activo con zona Pendiente.\n");
+	printf("2 - Mostrar el listado de censistas de Avellaneda, Lanús, Lomas de Zamora o Banfield ordenados alfabéticamente por apellido y nombre.\n");
+	printf("3 - Informar nombre de localidad con más casas ausentes.\n");
+	printf("4 - Informar el censista cuya zona fue la más censada (total censados presencial y virtual)\n");
+	printf("5 - Informar el promedio de censos por censista/zona.\n");
 	printf("INGRESE OPCION: ");
 	fflush(stdin);
 	scanf("%d", &opcion);
@@ -429,3 +446,4 @@ int cargarDescripcionCensistaApellido(eCensista censistas[],int tam,int id,char 
     }
     return todoOk;
 }
+

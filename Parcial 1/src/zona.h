@@ -153,4 +153,4 @@ void mostrarZonaSinCensista(eZona unaZona,eCensista censistas[],int lenCensista,
 /// @return 1 si pudo,0 sino
 int bajaCensista(eCensista censistas[], int len,eZona zonas[], int lenZonas);
 
-
+int mostrarCensistasLoc(eCensista censistas[], int len,eZona zonas[], int lenZonas);

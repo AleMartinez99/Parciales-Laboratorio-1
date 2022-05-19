@@ -5,6 +5,7 @@
 #include "localidades.h"
 #include "zona.h"
 #include "dataWareHouse.h"
+#include "informes.h"
 
 #define C_INACTIVO -1
 #define C_LIBERADO 0
@@ -26,6 +27,7 @@ int main(void) {
 	int seguir;
 	int nextId = 1;
 	int nextIdZona = 1;
+	int cantidad;
 
 	eLocalidad localidades[LEN_LOCALIDADES] = {
 	                {1000,"Avellaneda"},
@@ -99,12 +101,37 @@ int main(void) {
 				 mostrarZonasSinCensista(zonas, LEN_ZONAS, censistas, LEN_CENSISTAS, localidades,  LEN_LOCALIDADES);
 				break;
 			case 9:
-				hardcodearCensistas(censistas,LEN_CENSISTAS, 8, &nextId);
+					switch(menuInformes()) {
+					case 1:
+						cantidad = cantCensistasActivosPendiente( censistas,  LEN_CENSISTAS, zonas, LEN_ZONAS);
+						if(cantidad != -1) {
+							printf("Cantidad de activos pendientes: %d", cantidad);
+						}
+						break;
+					case 2:
+						ordenadosYMostrarApellidoYNombre( censistas, LEN_CENSISTAS);
+						mostrarCensistasLoc( censistas,LEN_CENSISTAS, zonas,  LEN_ZONAS);
+						break;
+					case 3:
+						informarLocalidadConMasAusentes( censistas, LEN_CENSISTAS,zonas, LEN_ZONAS ,localidades, LEN_LOCALIDADES);
+						break;
+					case 4:
+						censistaMayorZonaCensada( censistas, LEN_CENSISTAS, zonas, LEN_ZONAS, localidades,  LEN_LOCALIDADES);
+						break;
+					case 5:
+						promedioCensistas( censistas, LEN_CENSISTAS, zonas, LEN_ZONAS, localidades,  LEN_LOCALIDADES);
+						break;
+					default:
+						printf("OPCION INVALIDA\n");
+					}
 				break;
 			case 10:
-				hardcodearZonas(zonas,LEN_ZONAS ,8, &nextIdZona);
+				hardcodearCensistas(censistas,LEN_CENSISTAS, 8, &nextId);
 				break;
 			case 11:
+				hardcodearZonas(zonas,LEN_ZONAS ,8, &nextIdZona);
+				break;
+			case 12:
 				seguir = 0;
 				break;
 			default:

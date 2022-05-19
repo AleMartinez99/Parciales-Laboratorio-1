@@ -2,6 +2,7 @@
 #include "direccion.h"
 
 
+
 #ifndef CENSISTA_H_
 #define CENSISTA_H_
 
@@ -126,4 +127,7 @@ int cargarDescripcionCensistaApellido(eCensista censistas[],int tam,int id,char 
 /// @param tam
 /// @return 1 si pudo, 0 si no hay pa mostrar
 int mostrarCensistasLiberados(eCensista censistas[], int tam);
+
+int menuInformes();
+
 
